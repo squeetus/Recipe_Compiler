@@ -1,5 +1,5 @@
 <?php
-$Units = 'cup cups can g gram grams kg kilogram L l liter lb pound mL ml milliliter oz ounce pt pint t tsp teaspoon T TB Tbl Tbsp tablespoon head inches inch batch clove bunch ';
+$Units = 'cup cups can g gram grams kg kilogram L l liter lb pound mL ml milliliter oz ounce pt pint t tsp teaspoon T TB Tbl Tbsp tablespoon head inches inch batch clove cloves bunch ';
 
 $IngredientList = array();
 
@@ -37,20 +37,17 @@ function parseForIngredients($content) {
         if(is_numeric($line[0]))
             $ingredient->amount = (int) $line[0];
          
-        $i = 0;
-        foreach($line as &$value) {
-            $i++;
-        }
+        $i = count($line);
         
-        $cost = substr($line[$i-1],1);
+        $cost = substr($line[$i],1);
         if(is_numeric($cost))
             $ingredient->cost = (double) $cost;
         
         $item = "";
         
-        for($j=1;$j<$i-1;$j++)
+        for($j=1;$j<$i;$j++)
             if(strpos($Units, $line[$j]) !== false) {
-                $ingredient->measure = $line[$j];
+                $ingredient->measure += " " . $line[$j];
             } else {
                 $item = $item . " " . $line[$j];    
             }
@@ -60,8 +57,6 @@ function parseForIngredients($content) {
         $IngredientList[$count] = &$ingredient;
         if(strpos($content,'<li class="ingredient" itemprop="ingredients">') === false)
             $sentinel = false;
-        
-        echo "<br />";
         $count += 1;
     }
 }
